@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "autoprefixer": "^10.3.6",
+    "postcss": "^8.3.8",
+    "tailwindcss": "^2.2.16"
+  },
+  "dependencies": {
+    "@citizenfx/client": "^2.0.4641-1",
+    "@citizenfx/server": "^2.0.4641-1"
+  }
+}

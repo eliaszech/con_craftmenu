@@ -1,0 +1,10 @@
+{
+  "recipes": [
+    {
+      "name": "Water",
+      "ingredients": [
+        ["bottle", 1], ["raw water", 10]
+      ]
+    }
+  ]
+}
