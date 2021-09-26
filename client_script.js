@@ -21,7 +21,6 @@ const loop = executeAsync(async () => {
     while(true) {
         if(IsControlJustReleased(0, 38)) {
             menuOpen = true;
-            menuOpen = true;
             toggleGui(true);
         }
         await new Promise(r => setTimeout(r, 1))
