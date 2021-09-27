@@ -1,4 +1,7 @@
+const data = require('config.json');
+
 let menuOpen = false;
+
 
 RegisterRawNuiCallback('closeMenu', () => {
     menuOpen = false;
@@ -9,8 +12,20 @@ function toggleGui(state) {
     SetNuiFocus(state, state)
     SendNUIMessage({
         type: "enableui",
-        enable: state
+        enable: state,
+        data: prepareData(data)
     })
+}
+
+function prepareData(data) {
+    data.categories.each((category) => {
+        category.recipes.each((recipe) => {
+            recipe.ingredients.each((ingredient) => {
+                ingredient.add('has', 2, 0)
+            })
+        })
+    })
+    return data;
 }
 
 async function executeAsync(targetFunction) {

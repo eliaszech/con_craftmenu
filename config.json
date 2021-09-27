@@ -1,10 +1,20 @@
 {
-  "recipes": [
-    {
-      "name": "Water",
-      "ingredients": [
-        ["bottle", 1], ["raw water", 10]
-      ]
-    }
-  ]
+  "categories": {
+    "weapons": [
+      {
+        "name": "CZ Bren 2 MS 7.62mm",
+        "description": "",
+        "ingredients": {
+          "bottle": {
+            "name": "Flasche",
+            "amount": 1
+          },
+          "raw_water": {
+            "name": "Nicht aufbereitetes Wasser",
+            "amount": 10
+          }
+        }
+      }
+    ]
+  }
 }

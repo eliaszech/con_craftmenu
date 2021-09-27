@@ -32,233 +32,30 @@
     </head>
     <body class="bg-gray-900">
         <div id="menu" class="flex items-center justify-center h-screen">
-            <main class="w-1/2 grid grid-cols-3 shadow border border-gray-700">
-                <section class="col-span-1" style="max-height: 500px;">
+            <main class="lg:w-1/2 md:w-3/4 sm: sm:w-4/5 grid grid-cols-3 shadow border border-gray-700">
+                <section class="col-span-1" style="min-height: 500px; max-height: 500px;">
                     <div class="h-full relative flex flex-col w-96 border-r border-gray-700 bg-gray-100">
                         <div class="flex-shrink-0">
                             <div class="h-16 px-6 flex flex-col justify-center bg-black">
                                 <div class="flex items-baseline space-x-3">
                                     <h2 class="text-lg font-medium text-white">Rezepte</h2>
-                                    <p class="text-sm font-medium text-gray-500">10 Rezepte</p>
+                                    <p class="text-sm font-medium text-gray-500" id="recCount"></p>
                                 </div>
                             </div>
                             <div class="ext-sm font-medium text-gray-400 border-b border-t border-gray-700">
-                                <input type="text" class="px-4 py-2 w-full rounded-none bg-gray-900 outline-none" placeholder="Rezepte durchsuchen..."/>
+                                <input type="text" class="px-4 py-2 w-full rounded-none bg-gray-900 outline-none" id="searchRec" placeholder="Rezepte durchsuchen..."/>
                             </div>
                         </div>
-                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
-                            <ul role="list" class="divide-y divide-gray-700">
-                                <li class="relative bg-black py-3 px-6 hover:bg-gray-900">
-                                    <div class="flex justify-between space-x-3">
-                                        <div class="min-w-0 flex-1">
-                                            <a href="#" class="block focus:outline-none">
-                                                <span class="absolute inset-0" aria-hidden="true"></span>
-                                                <p class="text-sm font-medium text-gray-300 truncate">AR15</p>
-                                            </a>
-                                        </div>
-                                        <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">20 s</time>
-                                    </div>
-                                    <div class="mt-1">
-                                        <p class="line-clamp-2 text-sm text-gray-500">
-                                            Ein standartisiertes NATO Sturmgewehr mit dem 5.56mm Kaliber
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="relative bg-black py-3 px-6 hover:bg-gray-900">
-                                    <div class="flex justify-between space-x-3">
-                                        <div class="min-w-0 flex-1">
-                                            <a href="#" class="block focus:outline-none">
-                                                <span class="absolute inset-0" aria-hidden="true"></span>
-                                                <p class="text-sm font-medium text-gray-300 truncate">AR15</p>
-                                            </a>
-                                        </div>
-                                        <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">20 s</time>
-                                    </div>
-                                    <div class="mt-1">
-                                        <p class="line-clamp-2 text-sm text-gray-500">
-                                            Ein standartisiertes NATO Sturmgewehr mit dem 5.56mm Kaliber
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="relative bg-black py-3 px-6 hover:bg-gray-900">
-                                    <div class="flex justify-between space-x-3">
-                                        <div class="min-w-0 flex-1">
-                                            <a href="#" class="block focus:outline-none">
-                                                <span class="absolute inset-0" aria-hidden="true"></span>
-                                                <p class="text-sm font-medium text-gray-300 truncate">AR15</p>
-                                            </a>
-                                        </div>
-                                        <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">20 s</time>
-                                    </div>
-                                    <div class="mt-1">
-                                        <p class="line-clamp-2 text-sm text-gray-500">
-                                            Ein standartisiertes NATO Sturmgewehr mit dem 5.56mm Kaliber
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="relative bg-black py-3 px-6 hover:bg-gray-900">
-                                    <div class="flex justify-between space-x-3">
-                                        <div class="min-w-0 flex-1">
-                                            <a href="#" class="block focus:outline-none">
-                                                <span class="absolute inset-0" aria-hidden="true"></span>
-                                                <p class="text-sm font-medium text-gray-300 truncate">AR15</p>
-                                            </a>
-                                        </div>
-                                        <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">20 s</time>
-                                    </div>
-                                    <div class="mt-1">
-                                        <p class="line-clamp-2 text-sm text-gray-500">
-                                            Ein standartisiertes NATO Sturmgewehr mit dem 5.56mm Kaliber
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="relative bg-black py-3 px-6 hover:bg-gray-900">
-                                    <div class="flex justify-between space-x-3">
-                                        <div class="min-w-0 flex-1">
-                                            <a href="#" class="block focus:outline-none">
-                                                <span class="absolute inset-0" aria-hidden="true"></span>
-                                                <p class="text-sm font-medium text-gray-300 truncate">AR15</p>
-                                            </a>
-                                        </div>
-                                        <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">20 s</time>
-                                    </div>
-                                    <div class="mt-1">
-                                        <p class="line-clamp-2 text-sm text-gray-500">
-                                            Ein standartisiertes NATO Sturmgewehr mit dem 5.56mm Kaliber
-                                        </p>
-                                    </div>
-                                </li>
-
+                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto bg-black">
+                            <ul role="list" class="bg-black divide-y divide-gray-700" id="recipesContainer">
                             </ul>
                         </nav>
                     </div>
                 </section>
-                <section class="col-span-2  flex-1 h-full flex flex-col overflow-hidden" style="max-height: 500px;">
-                    <!-- Top section -->
-                    <div class="flex-shrink-0 bg-black border-b border-gray-700">
-                        <!-- Toolbar-->
-                        <div class="h-16 flex flex-col justify-center">
-                            <div class="px-4 sm:px-6 lg:px-8">
-                                <div class="py-3 flex justify-between">
-                                    <!-- Left buttons -->
-                                    <div>
-                                      <span class="relative z-0 inline-flex shadow-sm rounded-md sm:shadow-none sm:space-x-3">
-                                        <span class="inline-flex sm:shadow-sm">
-                                          <button type="button" class="relative inline-flex items-center px-4 py-2 rounded-l-md rounded-r-none font-medium bg-white hover:bg-gray-300 shadow">
-                                            <!-- Heroicon name: solid/reply -->
-                                            <i class="far fa-pencil-ruler"></i>&nbsp;
-                                            <span>Herstellen</span>
-                                          </button>
-                                          <button type="button" class="hidden sm:inline-flex -ml-px relative items-center rounded-l-none px-4 py-2 font-medium bg-white hover:bg-gray-300 shadow">
-                                            <!-- Heroicon name: solid/pencil -->
-                                            <i class="far fa-save"></i>&nbsp;
-                                            <span>Merken</span>
-                                          </button>
-                                        </span>
-                                      </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Message header -->
-                    </div>
-
-                    <div class="min-h-0 flex-1 overflow-y-auto bg-black">
-                        <div class="bg-black pt-3 pb-3 shadow border-b border-gray-700">
-                            <div class="px-4 sm:flex sm:justify-between sm:items-baseline sm:px-6 lg:px-8">
-                                <div class="sm:w-0 sm:flex-1">
-                                    <h1 id="message-heading" class="text-lg font-medium text-gray-300">
-                                        CZ Bren 2 MS 7.62mm
-                                    </h1>
-                                    <p class="mt-1 text-sm text-gray-500 truncate">
-                                        Ein Halbautomatisches Sturmgewehr von CZ das in NATO 5.56mm und 7.62mm angeboten wird.
-                                    </p>
-                                    <span class="mt-1 text-sm text-gray-300 truncate">
-                                        <i class="far fa-clock"></i> Herstellungsdauer: 35s
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <table class="min-w-full divide-y divide-gray-800">
-                            <thead class="bg-black">
-                                <tr>
-                                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Benötigte Items
-                                    </th>
-                                    <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Anzahl
-                                    </th>
-                                    <th class="hidden px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider md:block">
-                                        Status
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-black divide-y divide-gray-800">
-                                <tr class="border-b border-gray-800">
-                                    <td class="max-w-0 w-full px-6 whitespace-nowrap">
-                                        <div class="flex">
-                                            <a href="#" class="space-x-2 truncate">
-                                                <i class="far fa-box-open text-white"></i>
-                                                <span class="text-white font-medium truncate text-lg">
-                                                    Waffenlauf
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-2 text-right whitespace-nowrap text-sm text-gray-500">
-                                        <span class="text-text-white font-bold">1 x </span>
-                                    </td>
-                                    <td class="hidden px-6 py-2 whitespace-nowrap text-sm text-gray-500 md:block">
-                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-200 text-green-900 capitalize">
-                                          Vorhanden
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="max-w-0 w-full px-6 whitespace-nowrap">
-                                        <div class="flex">
-                                            <a href="#" class="space-x-2 truncate">
-                                                <i class="far fa-box-open text-white"></i>
-                                                <span class="text-white font-medium truncate text-lg">
-                                                    Verschlussgehäuse
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-2 text-right whitespace-nowrap text-sm text-gray-500">
-                                        <span class="text-white font-bold">1 x </span>
-                                    </td>
-                                    <td class="hidden px-6 py-2 whitespace-nowrap text-sm text-gray-500 md:block text-center">
-                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-200 text-red-900 capitalize">
-                                          Fehlt
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="max-w-0 w-full px-6 whitespace-nowrap">
-                                        <div class="flex">
-                                            <a href="#" class="space-x-2 truncate">
-                                                <i class="far fa-box-open text-white"></i>
-                                                <span class="text-white font-medium truncate text-lg">
-                                                    30 Schuss Magazin 5.56mm
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-2 text-right whitespace-nowrap text-sm text-gray-500">
-                                        <span class="text-white font-bold">1 x </span>
-                                    </td>
-                                    <td class="hidden px-6 py-2 whitespace-nowrap text-sm text-gray-500 md:block text-center">
-                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-200 text-red-900 capitalize">
-                                          Fehlt
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <section class="col-span-2  flex-1 h-full flex flex-col bg-black overflow-hidden" style="max-height: 500px;" id="recipeContainer">
+                    <h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>
                 </section>
-                <footer class="col-span-3 border-t border-gray-700 py-1 px-2">
+                <footer class="col-span-3 border-t border-gray-700 py-1 px-2 bg-gray-900">
                     <span class="text-gray-500 text-sm">In Entwicklung, bei Fehlern bitte bei Baumi#9999 melden <i class="far fa-copyright"></i> Oktagon-X, Baumi</span>
                 </footer>
             </main>
