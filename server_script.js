@@ -14,6 +14,5 @@ function removeItemsFromBlueprint(source, blueprint, amount) {
     blueprint.ingredients.forEach((ingredient) => {
         source.removeInventoryItem(ingredient.identifier, ingredient.amount)
     })
-
     source.addInventoryItem(blueprint.identifier, blueprint.craft_amount * amount)
 }

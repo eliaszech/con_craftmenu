@@ -6,13 +6,17 @@ function craftItem(category, item, amount) {
     }));
 }
 
+function resetRecipe() {
+    $('#recipeContainer').html(`<h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>`);
+}
+
 const loadRecipe = (category, item) => {
     let recipe = config.categories.find(cat => cat.name == category).recipes.find(rec => rec.identifier == item);
     $('#craftRecipe').removeClass('hidden')
     $('#recipeContainer').html(`
         <div class="flex-shrink-0 bg-gray-900 border-b border-gray-700">
             <!-- Toolbar-->
-            <div class="h-16 flex flex-col justify-center">
+            <div class="h-12 flex flex-col justify-center">
                 <div class="px-4">
                     <div class="py-3 flex justify-between">
                         <!-- Left buttons -->
@@ -24,13 +28,27 @@ const loadRecipe = (category, item) => {
             </div>
             <!-- Message header -->
         </div>
+        <div class="flex-shrink-0 bg-gray-900 border-b border-gray-700 hidden" id="craftTimer" style="background: linear-gradient(90deg, red 0%, #1A202C 100%);">
+            <!-- Toolbar-->
+            <div class="h-10 flex flex-col justify-center">
+                <div class="px-4">
+                    <div class="py-3 flex justify-between">
+                        <!-- Left buttons -->
+                        <div>
+                            <h1 class="text-white text-xl font-medium" id="craftDuration"></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Message header -->
+        </div>
         <div class="min-h-0 flex-1 overflow-y-auto">
             <div class="bg-gray-900 pt-3 pb-3 shadow border-b border-gray-700">
                 <div class="px-4 flex items-center">
                     <img class="h-20 w-20 rounded block mr-3" src="${recipe.image}" alt="">
                     <div class="sm:w-0 sm:flex-1">
-                        <h1 id="message-heading" class="text-lg font-medium text-gray-300">
-                            ${recipe.craft_amount}x ${recipe.name}
+                        <h1 class="text-lg font-medium text-gray-300">
+                            ${recipe.name}
                         </h1>
                         <p class="mt-1 text-sm text-gray-500 truncate">
                             ${recipe.description}
@@ -55,7 +73,6 @@ const loadRecipe = (category, item) => {
                         <div class="py-3 flex justify-between">
                             <!-- Left buttons -->
                             <div>
-
                             </div>
                             <div>
                               <span class="relative z-0 inline-flex shadow-sm rounded-md sm:shadow-none sm:space-x-3">
@@ -82,23 +99,18 @@ const loadRecipe = (category, item) => {
 
         $('#ingredientsContainer').append(` 
         <tr class="border-b border-gray-700">
-            <td class="px-6 py-2 text-right w-1 whitespace-nowrap align-middle text-sm text-gray-500">
-                <span class="font-bold">${ingredient.has}x/${ingredient.amount}x </span>
+            <td class="px-6 py-2 text-right w-1 whitespace-nowrap align-middle text-md text-gray-500">
+                <span class="font-bold ${hasIngreds ? 'text-green-500' : 'text-red-500' }">${ingredient.has}x</span>/<span>${ingredient.amount}x </span>
             </td>
             <td class="max-w-0 w-full px-6 whitespace-nowrap">
                 <div class="flex">
                     <a href="#" class="space-x-2 truncate text-gray-400">
                         <i class="${ingredient.icon} "></i>
-                        <span class=" font-medium truncate text-lg">
+                        <span class=" font-medium truncate text-lg ${hasIngreds ? 'text-green-500' : 'text-red-500' }">
                             ${ingredient.name}
                         </span>
                     </a>
                 </div>
-            </td>
-            <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-500 block align-middle text-center">
-                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${hasIngreds ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' } capitalize">
-                    ${hasIngreds ? 'Vorhanden' : 'Fehlt' }
-                </span>
             </td>
         </tr>`)
     })
@@ -133,7 +145,6 @@ function loadRecipes(search = '') {
                             <p class="text-sm font-medium text-gray-300 truncate">${recipe.craft_amount}x ${recipe.name}</p>
                         </a>
                     </div>
-                    <time class="flex-shrink-0 whitespace-nowrap text-sm text-gray-400">${recipe.craft_duration} s</time>
                 </div>
                 <div class="mt-1">
                     <p class="line-clamp-2 text-sm text-gray-500">
@@ -158,11 +169,20 @@ $(function() {
         if(event.data.type == 'enableui') {
             config = event.data.data
             loadRecipes();
+            if(!event.data.isCrafting)
+                resetRecipe()
+
             $('#menu').toggleClass('hidden');
         } else if(event.data.type == 'reloadui') {
             config = event.data.data
             loadRecipes();
             loadRecipe(event.data.category, event.data.item)
+        } else if(event.data.type == 'updateTimer') {
+            let progress = (event.data.elapsed / event.data.time) * 100
+            $('#craftTimer').removeClass('hidden')
+            $('#craftRecipe').addClass('hidden')
+            $('#craftDuration').html(event.data.time - event.data.elapsed + " Sekunden übrig")
+            $('#craftTimer').css('background', `linear-gradient(to right, #2D3748 ${progress}%, #1A202C 0%)`)
         }
     })
 
