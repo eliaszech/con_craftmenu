@@ -20,7 +20,8 @@ server_script 'server_script.js'
 files {
     'menu/menu.html',
     'menu/js/jquery.min.js',
-    'menu/js/scripts.js'
+    'menu/js/scripts.js',
+    'config.json'
 }
 ui_page 'menu/menu.html'
 
