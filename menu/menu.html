@@ -30,30 +30,72 @@
             }
         </style>
     </head>
-    <body class="bg-gray-900">
+    <body class="bg-gray-800">
         <div id="menu" class="flex items-center justify-center h-screen">
             <main class="lg:w-1/2 md:w-3/4 sm: sm:w-4/5 grid grid-cols-3 shadow border border-gray-700">
                 <section class="col-span-1" style="min-height: 500px; max-height: 500px;">
                     <div class="h-full relative flex flex-col w-96 border-r border-gray-700 bg-gray-100">
                         <div class="flex-shrink-0">
-                            <div class="h-16 px-6 flex flex-col justify-center bg-black">
+                            <div class="h-16 px-6 flex flex-col justify-center bg-gray-900">
                                 <div class="flex items-baseline space-x-3">
-                                    <h2 class="text-lg font-medium text-white">Rezepte</h2>
+                                    <h2 class="text-lg font-medium text-white">Blueprints</h2>
                                     <p class="text-sm font-medium text-gray-500" id="recCount"></p>
                                 </div>
                             </div>
                             <div class="ext-sm font-medium text-gray-400 border-b border-t border-gray-700">
-                                <input type="text" class="px-4 py-2 w-full rounded-none bg-gray-900 outline-none" id="searchRec" placeholder="Rezepte durchsuchen..."/>
+                                <input type="text" class="px-4 py-2 w-full rounded-none bg-gray-800 outline-none" id="searchRec" placeholder="Rezepte durchsuchen..."/>
                             </div>
                         </div>
-                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto bg-black">
-                            <ul role="list" class="bg-black divide-y divide-gray-700" id="recipesContainer">
+                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto bg-gray-900">
+                            <ul role="list" class="divide-y divide-gray-700" id="recipesContainer">
                             </ul>
                         </nav>
                     </div>
                 </section>
-                <section class="col-span-2  flex-1 h-full flex flex-col bg-black overflow-hidden" style="max-height: 500px;" id="recipeContainer">
-                    <h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>
+                <section class="col-span-2  flex-1 h-full flex flex-col bg-gray-900 overflow-hidden" style="max-height: 500px;">
+                    <div class="flex-shrink-0 bg-gray-900 border-b border-gray-700">
+                        <!-- Toolbar-->
+                        <div class="h-16 flex flex-col justify-center">
+                            <div class="px-4">
+                                <div class="py-3 flex justify-between">
+                                    <!-- Left buttons -->
+                                    <div>
+                                        <h1 class="text-white text-xl font-medium">Oktagon Herstellungsmenü</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Message header -->
+                    </div>
+                    <div class="min-h-0 flex-1 overflow-y-auto" id="recipeContainer">
+                        <h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>
+                    </div>
+                    <div class="flex-shrink-0 bg-gray-900 border-t border-gray-700 hidden" id="craftRecipe">
+                        <div class="flex-shrink-0 bg-gray-900 ">
+                            <!-- Toolbar-->
+                            <div class="h-16 flex flex-col justify-center">
+                                <div class="px-4">
+                                    <div class="py-3 flex justify-between">
+                                        <!-- Left buttons -->
+                                        <div>
+
+                                        </div>
+                                        <div>
+                                          <span class="relative z-0 inline-flex shadow-sm rounded-md sm:shadow-none sm:space-x-3">
+                                            <span class="inline-flex float-right">
+                                              <button type="button" class="relative inline-flex items-center px-4 py-2 rounded-md text-gray-400  border border-gray-700 font-medium bg-gray-800 hover:bg-gray-700 shadow">
+                                                <!-- Heroicon name: solid/reply -->
+                                                <i class="far fa-pencil-ruler"></i>&nbsp;
+                                                <span>Gegenstand herstellen</span>
+                                              </button>
+                                            </span>
+                                          </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
                 <footer class="col-span-3 border-t border-gray-700 py-1 px-2 bg-gray-900">
                     <span class="text-gray-500 text-sm">In Entwicklung, bei Fehlern bitte bei Baumi#9999 melden <i class="far fa-copyright"></i> Oktagon-X, Baumi</span>

@@ -104,37 +104,9 @@ const config = {
 
 const loadRecipe = (category, recipe) => {
     recipe = config.categories.find(cat => cat.name == category).recipes.find(rec => rec.id == recipe);
+    $('#craftRecipe').removeClass('hidden')
     $('#recipeContainer').html(`
-        <div class="flex-shrink-0 bg-black border-b border-gray-700">
-            <!-- Toolbar-->
-            <div class="h-16 flex flex-col justify-center">
-                <div class="px-4 sm:px-6 lg:px-8">
-                    <div class="py-3 flex justify-between">
-                        <!-- Left buttons -->
-                        <div>
-                          <span class="relative z-0 inline-flex shadow-sm rounded-md sm:shadow-none sm:space-x-3">
-                            <span class="inline-flex sm:shadow-sm">
-                              <button type="button" class="relative inline-flex items-center px-4 py-2 rounded-l-md rounded-r-none font-medium bg-white hover:bg-gray-300 shadow">
-                                <!-- Heroicon name: solid/reply -->
-                                <i class="far fa-pencil-ruler"></i>&nbsp;
-                                <span>Herstellen</span>
-                              </button>
-                              <button type="button" class="-ml-px relative items-center rounded-l-none px-4 py-2 font-medium bg-white hover:bg-gray-300 shadow">
-                                <!-- Heroicon name: solid/pencil -->
-                                <i class="far fa-save"></i>&nbsp;
-                                <span>Merken</span>
-                              </button>
-                            </span>
-                          </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Message header -->
-        </div>
-
-        <div class="min-h-0 flex-1 overflow-y-auto bg-black" id="recipeContainer">
-            <div class="bg-black pt-3 pb-3 shadow border-b border-gray-700">
+            <div class="bg-gray-900 pt-3 pb-3 shadow border-b border-gray-700">
                 <div class="px-4 flex items-center">
                     <img class="h-20 w-20 rounded block mr-3" src="${recipe.image}" alt="">
                     <div class="sm:w-0 sm:flex-1">
@@ -151,20 +123,7 @@ const loadRecipe = (category, recipe) => {
                 </div>
             </div>
             <table class="min-w-full divide-y divide-gray-800">
-                <thead class="bg-black">
-                    <tr>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Benötigte Items
-                        </th>
-                        <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Anzahl
-                        </th>
-                        <th class="hidden px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider md:block">
-                            Status
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-black divide-y divide-gray-800" id="ingredientsContainer">
+                <tbody class="bg-gray-900 divide-y divide-gray-700" id="ingredientsContainer">
                     
                 </tbody>
             </table>
@@ -172,7 +131,10 @@ const loadRecipe = (category, recipe) => {
 
     recipe.ingredients.forEach((ingredient) => {
         $('#ingredientsContainer').append(` 
-        <tr class="border-b border-gray-800">
+        <tr class="border-b border-gray-700">
+            <td class="px-6 py-2 text-right w-1 whitespace-nowrap align-middle text-sm text-gray-500">
+                <span class="font-bold">${ingredient.amount}x </span>
+            </td>
             <td class="max-w-0 w-full px-6 whitespace-nowrap">
                 <div class="flex">
                     <a href="#" class="space-x-2 truncate text-gray-400">
@@ -183,10 +145,7 @@ const loadRecipe = (category, recipe) => {
                     </a>
                 </div>
             </td>
-            <td class="px-6 py-2 text-right whitespace-nowrap text-sm text-gray-500">
-                <span class="font-bold">${ingredient.amount} x </span>
-            </td>
-            <td class="hidden px-6 py-2 whitespace-nowrap text-sm text-gray-500 md:block text-center">
+            <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-500 block align-middle text-center">
                 <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${ingredient.amount <= ingredient.has ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' } capitalize">
                     ${ingredient.amount <= ingredient.has ? 'Vorhanden' : 'Fehlt' }
                 </span>
@@ -199,17 +158,19 @@ function loadRecipes(search = '') {
     let recCount = 0
     $('#recipesContainer').html('')
     config.categories.forEach((category) => {
+        if(search != '' && search.startsWith('@') && !category.name.toLowerCase().includes(search.substr(1, search.length).toLowerCase()))
+            return
 
         $('#recipesContainer').append(`
         <li class="relative bg-gray-900 py-1 px-6 text-gray-500 font-medium">
            <span><i class="${category.icon}" aria-hidden="true"></i>&nbsp; ${category.name}</span>
         </li>`);
         category.recipes.forEach((recipe) => {
-            if(search != '' && !recipe.name.toLowerCase().includes(search.toLowerCase()))
+            if(search != '' && !recipe.name.toLowerCase().includes(search.toLowerCase()) && !search.startsWith('@'))
                 return
-
+            recCount++;
             $('#recipesContainer').append(`
-            <li class="relative bg-black py-3 px-6 hover:bg-gray-900" onclick="loadRecipe('${category.name}', ${recipe.id})">
+            <li class="relative bg-gray-800 py-3 px-6 hover:bg-gray-900" onclick="loadRecipe('${category.name}', ${recipe.id})">
                 <div class="flex justify-between space-x-3">
                     <div class="min-w-0 flex-1">
                         <a href="#" class="block focus:outline-none">
@@ -227,6 +188,7 @@ function loadRecipes(search = '') {
             </li>`)
         })
     })
+    $('#recCount').html(`${recCount} Rezepte gefunden`)
 }
 
 $(function() {
