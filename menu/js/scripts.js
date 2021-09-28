@@ -2,7 +2,13 @@ let config = null;
 
 function craftItem(category, item, amount) {
     $.post('https://oktagoncraftmenu/craftItem', JSON.stringify({
-        "categoryID": category, "item": item, "amount": amount
+        "category": category, "item": item, "amount": amount
+    }));
+}
+
+function cancelCraft(category, item) {
+    $.post('https://oktagoncraftmenu/cancelCraft', JSON.stringify({
+        "category": category, "item": item
     }));
 }
 
@@ -64,6 +70,31 @@ const loadRecipe = (category, item) => {
                     
                 </tbody>
             </table>
+        </div>
+        <div class="flex-shrink-0 bg-gray-900 border-t border-gray-700 hidden" id="cancelCraft">
+            <div class="flex-shrink-0 bg-gray-900 ">
+                <!-- Toolbar-->
+                <div class="h-16 flex flex-col justify-center">
+                    <div class="px-4">
+                        <div class="py-3 flex justify-between">
+                            <!-- Left buttons -->
+                            <div>
+                            </div>
+                            <div>
+                              <span class="relative z-0 inline-flex shadow-sm rounded-md sm:shadow-none sm:space-x-3">
+                                <span class="inline-flex float-right">
+                                  <button type="button" onclick="cancelCraft('${category}', '${recipe.identifier}')" class="relative inline-flex items-center px-4 py-2 rounded-md text-white border border-red-700 font-medium bg-red-500 hover:bg-red-300 shadow">
+                                    <!-- Heroicon name: solid/reply -->
+                                    <i class="far fa-times"></i>&nbsp;
+                                    <span>Herstellen abbrechen</span>
+                                  </button>
+                                </span>
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="flex-shrink-0 bg-gray-900 border-t border-gray-700 hidden" id="craftRecipe">
             <div class="flex-shrink-0 bg-gray-900 ">
@@ -181,6 +212,7 @@ $(function() {
             let progress = (event.data.elapsed / event.data.time) * 100
             $('#craftTimer').removeClass('hidden')
             $('#craftRecipe').addClass('hidden')
+            $('#cancelCraft').removeClass('hidden')
             $('#craftDuration').html(event.data.time - event.data.elapsed + " Sekunden übrig")
             $('#craftTimer').css('background', `linear-gradient(to right, #2D3748 ${progress}%, #1A202C 0%)`)
         }

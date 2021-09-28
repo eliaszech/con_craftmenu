@@ -5,7 +5,6 @@
       "icon" : "far fa-tshirt",
       "recipes": [
         {
-          "id": 1,
           "name": "Pullover",
           "identifier": "pullover",
           "description": "Ein ganz normaler Pullover",

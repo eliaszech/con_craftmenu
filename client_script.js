@@ -4,9 +4,10 @@ let menuOpen = false;
 let ESX = null;
 
 let craftingInProgress = false;
-let currentlyCraftingItem = { "category": null, "item": null }
 let craftDuration = 0;
+let craftingCanceled = false;
 let elapsedTime = 0;
+let ped = PlayerPedId();
 
 const waitForESX = executeAsync(async () => {
     while(ESX == null) {
@@ -20,9 +21,20 @@ RegisterRawNuiCallback('closeMenu', () => {
     toggleGui(false);
 })
 
+RegisterRawNuiCallback('cancelCraft', (data) => {
+    const ret = JSON.parse(data.body)
+    craftingCanceled = true;
+    SendNUIMessage({
+        type: "reloadui",
+        category: ret.category,
+        item: ret.item,
+        data: prepareData(config)
+    })
+})
+
 RegisterRawNuiCallback('craftItem', async (data) => {
     const ret = JSON.parse(data.body)
-    CraftItem(ret.categoryID, getRecipeByIdentifier(ret.categoryID, ret.item), ret.amount)
+    CraftItem(ret.category, getRecipeByIdentifier(ret.category, ret.item), ret.amount)
 })
 
 function getRecipeByIdentifier(category, identifier) {
@@ -40,17 +52,31 @@ function toggleGui(state) {
 }
 
 function CraftItem(category, item, amount) {
-    const craftTime = executeAsync(async () => {
+    executeAsync(async () => {
         let time = item.craft_duration
 
         if(time > 0) {
-            craftingInProgress = true;
-            currentlyCraftingItem.category = category
-            currentlyCraftingItem.item = item
+            let animDict = "amb@world_human_hammering@male@base"
+            let anim = "base"
+
+            RequestAnimDict(animDict)
+            while(!HasAnimDictLoaded(animDict)) { await new Promise(r => setTimeout(r, 1)) }
+
+            craftingInProgress = true
             craftDuration = time
-            await new Promise(r => setTimeout(r, time * 1000))
-            craftingInProgress = false;
+
+            ClearPedTasksImmediately(ped)
+            TaskPlayAnim(ped, animDict, anim, 8.0, -8.0, craftDuration * 1000, 1, 1, true, true, true)
+            await timer(craftDuration)
+            ClearPedTasksImmediately(ped)
+
+            craftingInProgress = false
             elapsedTime = 0
+
+            if(craftingCanceled) {
+                craftingCanceled = false
+                return
+            }
         }
 
         TriggerServerEvent('oktagon:craftItem', category, item.identifier, amount)
@@ -64,9 +90,18 @@ function CraftItem(category, item, amount) {
     })
 }
 
+async function timer(duration) {
+    for(let i = 0; i < duration; i++) {
+        if(craftingCanceled)
+            return
+
+        await new Promise(r => setTimeout(r, 1000))
+    }
+}
+
 const checkTime = executeAsync(async () => {
     while(true) {
-        if(craftingInProgress) {
+        if(craftingInProgress && !craftingCanceled) {
             elapsedTime++
             SendNUIMessage({
                 type: "updateTimer",
@@ -98,11 +133,18 @@ async function executeAsync(targetFunction) {
     setTimeout(targetFunction, 0)
 }
 
-const loop = executeAsync(async () => {
+executeAsync(async () => {
     while(true) {
         if(IsControlJustReleased(0, 38)) {
-            menuOpen = true;
-            toggleGui(true);
+            let pos = GetEntityCoords(ped, true)
+
+            if(GetDistanceBetweenCoords(pos.x, pos.y, pos.z, 1691.17, 3588.65, 35.62, true) <= 2) {
+                menuOpen = true;
+                toggleGui(true);
+            }
+        }
+        if(IsControlJustReleased(0, 73)) {
+            craftingCanceled = true;
         }
         await new Promise(r => setTimeout(r, 1))
     }
