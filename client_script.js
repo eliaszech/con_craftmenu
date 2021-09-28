@@ -133,12 +133,37 @@ async function executeAsync(targetFunction) {
     setTimeout(targetFunction, 0)
 }
 
+function drawTextWorldToScreen(x, y, z, text) {
+    let onScreenPos = World3dToScreen2d(x, y, z)
+    let cCoords = GetGameplayCamCoords()
+    let dist = GetDistanceBetweenCoords(cCoords[0], cCoords[1], cCoords[2], x, y, z, true)
+
+    if(dist <= 3) {
+        if (onScreenPos[0]) {
+            BeginTextCommandDisplayText("STRING")
+
+            SetTextScale(0.0, 0.55)
+            SetTextFont(0)
+            SetTextProportional(1)
+            SetTextColour(255, 255, 255, 255)
+            SetTextDropshadow(0, 0, 0, 0, 255)
+            SetTextEdge(2, 0, 0, 0, 150)
+            SetTextDropShadow()
+            SetTextOutline()
+
+            SetTextCentre(1)
+            AddTextComponentString(text)
+            EndTextCommandDisplayText(onScreenPos[1], onScreenPos[2])
+        }
+    }
+}
+
 executeAsync(async () => {
     while(true) {
         if(IsControlJustReleased(0, 38)) {
             let pos = GetEntityCoords(ped, true)
-
-            if(GetDistanceBetweenCoords(pos.x, pos.y, pos.z, 1691.17, 3588.65, 35.62, true) <= 2) {
+            let distanceToTable = GetDistanceBetweenCoords(pos[0], pos[1], pos[2], 1691.1, 3588.6, 35.6, true)
+            if(distanceToTable <= 1) {
                 menuOpen = true;
                 toggleGui(true);
             }
@@ -146,6 +171,17 @@ executeAsync(async () => {
         if(IsControlJustReleased(0, 73)) {
             craftingCanceled = true;
         }
+        if(IsControlJustReleased(0, 48)) {
+            SetEntityCoords(ped, 1691.17, 3588.65, 35.62, true, false, false, false)
+        }
+
+        config.tables.forEach((table) => {
+            let pos = GetEntityCoords(ped, true)
+            if(GetDistanceBetweenCoords(pos[0], pos[1], pos[2], table.x, table.y, table.z, true) <= 1) {
+                drawTextWorldToScreen(table.x, table.y, table.z, "Drücke [E] um das Herstellungsmenü zu öffnen")
+            }
+        })
+
         await new Promise(r => setTimeout(r, 1))
     }
 })
