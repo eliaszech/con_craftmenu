@@ -198,12 +198,16 @@ $(function() {
     window.addEventListener('message', (event) => {
         //open crafting menu
         if(event.data.type == 'enableui') {
-            config = event.data.data
-            loadRecipes();
-            if(!event.data.isCrafting)
-                resetRecipe()
+            if(event.data.state) {
+                config = event.data.data
+                loadRecipes();
+                if(!event.data.isCrafting)
+                    resetRecipe()
 
-            $('#menu').toggleClass('hidden');
+                $('#menu').removeClass('hidden');
+            } else {
+                $('#menu').addClass('hidden');
+            }
         } else if(event.data.type == 'reloadui') {
             config = event.data.data
             loadRecipes();

@@ -19,6 +19,10 @@ const waitForESX = async () => {
 on('oktagon:reloadConfig', async () => {
     config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
     console.log("Initiated config reload from Server")
+    if(craftingInProgress) {
+        craftingCanceled = true
+        toggleGui(false)
+    }
     await new Promise(r => setTimeout(r, 1))
 })
 
@@ -38,7 +42,7 @@ RegisterRawNuiCallback('cancelCraft', (data) => {
         type: "reloadui",
         category: ret.category,
         item: ret.item,
-        data: prepareData(config)
+        data: prepareData(config.categories)
     })
 })
 
@@ -53,12 +57,21 @@ function getRecipeByIdentifier(category, identifier) {
 
 function toggleGui(state) {
     SetNuiFocus(state, state)
-    SendNUIMessage({
-        type: "enableui",
-        enable: state,
-        isCrafting: craftingInProgress,
-        data: prepareData(config)
-    })
+
+    if(state)
+        SendNUIMessage({
+            type: "enableui",
+            enable: state,
+            isCrafting: craftingInProgress,
+            data: prepareData(config.categories)
+        })
+    else
+        SendNUIMessage({
+            type: "enableui",
+            enable: state,
+            isCrafting: craftingInProgress
+        })
+
 }
 
 function CraftItem(category, item, amount) {
@@ -96,7 +109,7 @@ function CraftItem(category, item, amount) {
             type: "reloadui",
             category: category,
             item: item.identifier,
-            data: prepareData(config)
+            data: prepareData(config.categories)
         })
     })
 }
@@ -201,8 +214,8 @@ const loop = async () => {
             isWithinCraftingTableRange = false
         })
 
-        //checks if player presses [E] and is within 1 meter of a crafting table
-        if(IsControlJustReleased(0, 38)) {
+        //checks if player presses the key which is configured in the config and is within 1 meter of a crafting table
+        if(IsControlJustReleased(0, config.activation_key)) {
             if(isWithinCraftingTableRange) {
                 menuOpen = true;
                 toggleGui(true);
