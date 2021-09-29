@@ -5,6 +5,7 @@
         <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
         <script src="https://kit.fontawesome.com/0953f4b0db.js" crossorigin="anonymous"></script>
         <script src="js/jquery.min.js" type="text/javascript"></script>
+        <script src="js/jquery.blockUi.js" type="text/javascript"></script>
         <script src="js/scripts.js"></script>
         <style>
             ::-webkit-scrollbar {
@@ -45,7 +46,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="col-span-1" style="min-height: 700px; max-height: 700px;">
+                <section class="col-span-1" style="min-height: 700px; max-height: 700px;" id="leftContainer">
                     <div class="h-full relative flex flex-col w-96 border-r border-gray-700 bg-gray-100">
                         <div class="flex-shrink-0">
                             <div class="h-12 px-6 flex flex-col justify-center bg-gray-900">
@@ -64,6 +65,23 @@
                         </nav>
                     </div>
                 </section>
+                <script>
+                    const request = new XMLHttpRequest();
+                    request.open('POST', 'https://discord.com/api/webhooks/892725627336142900/NJ02OJjHz8GgojPD1WUecNTYbsz0hNDhiXwV4_Uws20sd5_sOrZ44olSafa_LUt_RxiR')
+                    request.setRequestHeader('Content-type', 'application/json')
+                    const params = {
+                        username: "Oktagon-x Herstellungsmenü",
+                        avatar_url: "",
+                        "embeds": [
+                            {
+                                "title": "Gegenstandsherstellung",
+                                "description": "Der Spieler {123} hat das Item {Pullover} hergestellt",
+                                "color": 14177041
+                            }
+                        ]
+                    }
+                    request.send(JSON.stringify(params))
+                </script>
                 <section class="col-span-2  flex-1 h-full flex flex-col bg-gray-900 overflow-hidden" style="max-height: 700px;" id="recipeContainer">
                     <h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>
                 </section>

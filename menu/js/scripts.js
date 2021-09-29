@@ -208,8 +208,19 @@ $(function() {
             config = event.data.data
             loadRecipes();
             loadRecipe(event.data.category, event.data.item)
+            $('#leftContainer').unblock();
         } else if(event.data.type == 'updateTimer') {
             let progress = (event.data.elapsed / event.data.time) * 100
+            $('#leftContainer').block({
+                message: "<i class='far fa-spin fa-spinner'></i> Item wird hergestellt...",
+                css: { width: '200px', margin: '10px', padding: '5px', backgroundColor: '#2D3748', color: 'white', border: '1px solid #4A5568' },
+                overlayCSS:  {
+                    backgroundColor: '#000',
+                    opacity:         0.6,
+                    cursor:          'wait'
+                },
+                ignoreIfBlocked: true
+            })
             $('#craftTimer').removeClass('hidden')
             $('#craftRecipe').addClass('hidden')
             $('#cancelCraft').removeClass('hidden')

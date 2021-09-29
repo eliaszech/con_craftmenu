@@ -1,4 +1,4 @@
-const config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
+let config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
 
 let menuOpen = false;
 let ESX = null;
@@ -9,12 +9,22 @@ let craftingCanceled = false;
 let elapsedTime = 0;
 let ped = PlayerPedId();
 
-const waitForESX = executeAsync(async () => {
+const waitForESX = async () => {
     while(ESX == null) {
         TriggerEvent('esx:getSharedObject', (obj) => ESX = obj)
         await new Promise(r => setTimeout(r, 1))
     }
+}
+
+on('oktagon:reloadConfig', async () => {
+    config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
+    console.log("Initiated config reload from Server")
+    await new Promise(r => setTimeout(r, 1))
 })
+
+RegisterCommand('refreshconfig', () => {
+    TriggerServerEvent('oktagon:refreshconfig')
+}, true)
 
 RegisterRawNuiCallback('closeMenu', () => {
     menuOpen = false;
@@ -71,6 +81,7 @@ function CraftItem(category, item, amount) {
             ClearPedTasksImmediately(ped)
 
             craftingInProgress = false
+            prevElapsedTime = -1
             elapsedTime = 0
 
             if(craftingCanceled) {
@@ -79,7 +90,7 @@ function CraftItem(category, item, amount) {
             }
         }
 
-        TriggerServerEvent('oktagon:craftItem', category, item.identifier, amount)
+        TriggerServerEvent('oktagon:craftItem', category, item, amount)
         await new Promise(r => setTimeout(r, 500))
         SendNUIMessage({
             type: "reloadui",
@@ -95,26 +106,34 @@ async function timer(duration) {
         if(craftingCanceled)
             return
 
+        elapsedTime++
+
         await new Promise(r => setTimeout(r, 1000))
     }
 }
 
-const checkTime = executeAsync(async () => {
+let prevElapsedTime = -1;
+const checkTime = async () => {
     while(true) {
         if(craftingInProgress && !craftingCanceled) {
-            elapsedTime++
-            SendNUIMessage({
-                type: "updateTimer",
-                time: craftDuration,
-                elapsed: elapsedTime
-            })
+            if(elapsedTime > prevElapsedTime || prevElapsedTime === -1) {
+                SendNUIMessage({
+                    type: "updateTimer",
+                    time: craftDuration,
+                    elapsed: elapsedTime
+                })
+                prevElapsedTime = elapsedTime
+            }
         }
-        await new Promise(r => setTimeout(r, 1000))
+        await new Promise(r => setTimeout(r, 100))
     }
-})
+}
 
+//Prepares the data that is sent to the GUI
 function prepareData(data) {
+    //get current player inventory
     let playerInventory = ESX.GetPlayerData().inventory
+    //loop through each recipe and set the has attribute so the gui can check if the player has all the ingredients
     data.categories.forEach((category) => {
         category.recipes.forEach((recipe) => {
             recipe.ingredients.forEach((ingredient) => {
@@ -129,15 +148,21 @@ function prepareData(data) {
     return data;
 }
 
+//this is a helper function that can be used to call a function that runs async (used instead of CrateThread in lua)
 async function executeAsync(targetFunction) {
     setTimeout(targetFunction, 0)
 }
 
+//Draws a given String on specified coordinates
 function drawTextWorldToScreen(x, y, z, text) {
+    //gets screen position of a the ingame position of the table location
     let onScreenPos = World3dToScreen2d(x, y, z)
+    //get the coordinates the camera is located at
     let cCoords = GetGameplayCamCoords()
+    //calculates the distance from the camera to the table location
     let dist = GetDistanceBetweenCoords(cCoords[0], cCoords[1], cCoords[2], x, y, z, true)
 
+    //checks if camera is within 3 meters of the table and draws the string if true
     if(dist <= 3) {
         if (onScreenPos[0]) {
             BeginTextCommandDisplayText("STRING")
@@ -158,30 +183,46 @@ function drawTextWorldToScreen(x, y, z, text) {
     }
 }
 
-executeAsync(async () => {
+//Scriptloop
+//Checks button presses and draws strings on table locations
+let isWithinCraftingTableRange = false;
+const loop = async () => {
     while(true) {
+        //current player position
+        let pos = GetEntityCoords(ped, true)
+
+        //loops tables in config and draws string on table the player is close to
+        config.tables.forEach((table) => {
+            if(GetDistanceBetweenCoords(pos[0], pos[1], pos[2], table.x, table.y, table.z, true) <= 1) {
+                isWithinCraftingTableRange = true
+                drawTextWorldToScreen(table.x, table.y, table.z, "Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
+                break
+            }
+            isWithinCraftingTableRange = false
+        })
+
+        //checks if player presses [E] and is within 1 meter of a crafting table
         if(IsControlJustReleased(0, 38)) {
-            let pos = GetEntityCoords(ped, true)
-            let distanceToTable = GetDistanceBetweenCoords(pos[0], pos[1], pos[2], 1691.1, 3588.6, 35.6, true)
-            if(distanceToTable <= 1) {
+            if(isWithinCraftingTableRange) {
                 menuOpen = true;
                 toggleGui(true);
+                break
             }
         }
+
+        //checks if the player presses [X] while crafting something, then sets the craftingCanceled flag
         if(IsControlJustReleased(0, 73)) {
-            craftingCanceled = true;
+            if(craftingInProgress)
+                craftingCanceled = true;
         }
+
+        //TODO: remove on live version
+        //checks if the player presses presses [Y] and teleports to this coordinates
         if(IsControlJustReleased(0, 48)) {
             SetEntityCoords(ped, 1691.17, 3588.65, 35.62, true, false, false, false)
         }
 
-        config.tables.forEach((table) => {
-            let pos = GetEntityCoords(ped, true)
-            if(GetDistanceBetweenCoords(pos[0], pos[1], pos[2], table.x, table.y, table.z, true) <= 1) {
-                drawTextWorldToScreen(table.x, table.y, table.z, "Drücke [E] um das Herstellungsmenü zu öffnen")
-            }
-        })
-
+        //waits for one millisecond so the game does not freeze
         await new Promise(r => setTimeout(r, 1))
     }
-})
+}
