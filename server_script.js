@@ -3,16 +3,11 @@ let ESX = null
 TriggerEvent('esx:getSharedObject', (obj) => ESX = obj)
 
 RegisterServerEvent('oktagon:craftItem')
-on('oktagon:craftItem', (category, blueprint, amount) => {
+AddEventHandler('oktagon:craftItem', (category, blueprint, amount) => {
     let player = ESX.GetPlayerFromId(source)
     removeItemsFromBlueprint(player, blueprint, amount).then(() => {
-        logRequest(player, blueprint, amount)
+        //logRequest(player, blueprint, amount)
     })
-})
-
-RegisterServerEvent('oktagon:refreshConfig')
-on('oktagon:refreshConfig', () => {
-    TriggerClientEvent('oktagon:reloadConfig')
 })
 
 async function logRequest(source, item, amount) {

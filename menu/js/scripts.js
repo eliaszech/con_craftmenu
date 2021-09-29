@@ -17,7 +17,7 @@ function resetRecipe() {
 }
 
 const loadRecipe = (category, item) => {
-    let recipe = config.categories.find(cat => cat.name == category).recipes.find(rec => rec.identifier == item);
+    let recipe = config.find(cat => cat.name == category).recipes.find(rec => rec.identifier == item);
     $('#craftRecipe').removeClass('hidden')
     $('#recipeContainer').html(`
         <div class="flex-shrink-0 bg-gray-900 border-b border-gray-700">
@@ -155,7 +155,7 @@ function loadRecipes(search = '') {
     let recCount = 0
     $('#recipesContainer').html('')
     $('#searchRec').val('')
-    config.categories.forEach((category) => {
+    config.forEach((category) => {
         if(search != '' && search.startsWith('@') && !category.name.toLowerCase().includes(search.substr(1, search.length).toLowerCase()))
             return
 
@@ -198,16 +198,14 @@ $(function() {
     window.addEventListener('message', (event) => {
         //open crafting menu
         if(event.data.type == 'enableui') {
-            if(event.data.state) {
-                config = event.data.data
-                loadRecipes();
-                if(!event.data.isCrafting)
-                    resetRecipe()
-
-                $('#menu').removeClass('hidden');
-            } else {
-                $('#menu').addClass('hidden');
+            config = event.data.data
+            loadRecipes();
+            if(!event.data.isCrafting) {
+                resetRecipe()
+                $('#leftContainer').unblock();
             }
+
+            $('#menu').toggleClass('hidden');
         } else if(event.data.type == 'reloadui') {
             config = event.data.data
             loadRecipes();

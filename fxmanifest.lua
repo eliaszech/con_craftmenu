@@ -20,7 +20,7 @@ server_script 'server_script.js'
 files {
     'menu/menu.html',
     'menu/js/jquery.min.js',
-    'menu/js/jquery.blockUI.js',
+    'menu/js/jquery.blockUi.js',
     'menu/js/scripts.js',
     'config.json'
 }

@@ -7,33 +7,15 @@ let craftingInProgress = false;
 let craftDuration = 0;
 let craftingCanceled = false;
 let elapsedTime = 0;
+let menuInitialized = false;
 let ped = PlayerPedId();
 
-const waitForESX = async () => {
+const waitForESX = executeAsync(async () => {
     while(ESX == null) {
         TriggerEvent('esx:getSharedObject', (obj) => ESX = obj)
         await new Promise(r => setTimeout(r, 1))
     }
-}
-
-SendNuiMessage({
-    type: "setTitle",
-    title: config.menu_title
 })
-
-on('oktagon:reloadConfig', async () => {
-    config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
-    console.log("Initiated config reload from Server")
-    if(craftingInProgress) {
-        craftingCanceled = true
-        toggleGui(false)
-    }
-    await new Promise(r => setTimeout(r, 1))
-})
-
-RegisterCommand('refreshconfig', () => {
-    TriggerServerEvent('oktagon:refreshconfig')
-}, true)
 
 RegisterRawNuiCallback('closeMenu', () => {
     menuOpen = false;
@@ -63,19 +45,20 @@ function getRecipeByIdentifier(category, identifier) {
 function toggleGui(state) {
     SetNuiFocus(state, state)
 
-    if(state)
+    if(!menuInitialized) {
         SendNUIMessage({
-            type: "enableui",
-            enable: state,
-            isCrafting: craftingInProgress,
-            data: prepareData(config.categories)
+            type: "setTitle",
+            title: config.menu_title
         })
-    else
-        SendNUIMessage({
-            type: "enableui",
-            enable: state,
-            isCrafting: craftingInProgress
-        })
+        menuInitialized = true
+    }
+
+    SendNUIMessage({
+        type: "enableui",
+        enable: state,
+        isCrafting: craftingInProgress,
+        data: prepareData(config.categories)
+    })
 
 }
 
@@ -131,7 +114,7 @@ async function timer(duration) {
 }
 
 let prevElapsedTime = -1;
-const checkTime = async () => {
+const checkTime = executeAsync(async () => {
     while(true) {
         if(craftingInProgress && !craftingCanceled) {
             if(elapsedTime > prevElapsedTime || prevElapsedTime === -1) {
@@ -145,14 +128,14 @@ const checkTime = async () => {
         }
         await new Promise(r => setTimeout(r, 100))
     }
-}
+})
 
 //Prepares the data that is sent to the GUI
-function prepareData(data) {
+function prepareData(categories) {
     //get current player inventory
     let playerInventory = ESX.GetPlayerData().inventory
     //loop through each recipe and set the has attribute so the gui can check if the player has all the ingredients
-    data.categories.forEach((category) => {
+    categories.forEach((category) => {
         category.recipes.forEach((recipe) => {
             recipe.ingredients.forEach((ingredient) => {
                 let item = playerInventory.find(item => item.name == ingredient.identifier)
@@ -163,7 +146,7 @@ function prepareData(data) {
             })
         })
     })
-    return data;
+    return categories;
 }
 
 //this is a helper function that can be used to call a function that runs async (used instead of CrateThread in lua)
@@ -181,7 +164,7 @@ function drawTextWorldToScreen(x, y, z, text) {
     let dist = GetDistanceBetweenCoords(cCoords[0], cCoords[1], cCoords[2], x, y, z, true)
 
     //checks if camera is within 3 meters of the table and draws the string if true
-    if(dist <= 3) {
+    if(dist <= 4) {
         if (onScreenPos[0]) {
             BeginTextCommandDisplayText("STRING")
 
@@ -203,28 +186,32 @@ function drawTextWorldToScreen(x, y, z, text) {
 
 //Scriptloop
 //Checks button presses and draws strings on table locations
-let isWithinCraftingTableRange = false;
-const loop = async () => {
+let isWithinCraftingTableRange = false
+let currentCraftingTable = null
+let BreakException = {}
+const loop = executeAsync(async () => {
     while(true) {
         //current player position
         let pos = GetEntityCoords(ped, true)
-
         //loops tables in config and draws string on table the player is close to
-        config.tables.forEach((table) => {
-            if(GetDistanceBetweenCoords(pos[0], pos[1], pos[2], table.x, table.y, table.z, true) <= 1) {
-                isWithinCraftingTableRange = true
-                drawTextWorldToScreen(table.x, table.y, table.z, "Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
-                break
-            }
-            isWithinCraftingTableRange = false
-        })
+
+        try {
+            config.tables.forEach((table) => {
+                if(GetDistanceBetweenCoords(pos[0], pos[1], pos[2], table.x, table.y, table.z, true) <= 1) {
+                    isWithinCraftingTableRange = true
+                    currentCraftingTable = table
+                    drawTextWorldToScreen(table.x, table.y, table.z, "Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
+                    throw BreakException
+                }
+                isWithinCraftingTableRange = false
+            })
+        } catch (e) {}
 
         //checks if player presses the key which is configured in the config and is within 1 meter of a crafting table
         if(IsControlJustReleased(0, config.activation_key)) {
             if(isWithinCraftingTableRange) {
                 menuOpen = true;
                 toggleGui(true);
-                break
             }
         }
 
@@ -243,4 +230,4 @@ const loop = async () => {
         //waits for one millisecond so the game does not freeze
         await new Promise(r => setTimeout(r, 1))
     }
-}
+})
