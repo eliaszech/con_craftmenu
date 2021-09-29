@@ -16,6 +16,11 @@ const waitForESX = async () => {
     }
 }
 
+SendNuiMessage({
+    type: "setTitle",
+    title: config.menu_title
+})
+
 on('oktagon:reloadConfig', async () => {
     config = JSON.parse(LoadResourceFile(GetCurrentResourceName(),'config.json'));
     console.log("Initiated config reload from Server")

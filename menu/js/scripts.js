@@ -213,6 +213,8 @@ $(function() {
             loadRecipes();
             loadRecipe(event.data.category, event.data.item)
             $('#leftContainer').unblock();
+        } else if(event.data.type == 'setTitle') {
+            $('#menuTitle').html(event.data.title)
         } else if(event.data.type == 'updateTimer') {
             let progress = (event.data.elapsed / event.data.time) * 100
             $('#leftContainer').block({
