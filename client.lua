@@ -19,17 +19,134 @@ local ped = nil
 Citizen.CreateThread(function()
     while ESX == nil do
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-        ped = PlayerPedId()
         Citizen.Wait(1)
     end
 end)
 
-RegisterRawNuiCallback('closeMenu', function()
-    menuOpen = false
-    toggleGui(false)
+local isWithinCraftingTableRange = false
+local currentCRaftingTable = nil
+Citizen.CreateThread(function()
+    while true do
+        ped = PlayerPedId()
+        local x, y, z = table.unpack(GetEntityCoords(ped, true))
+
+        for key, table in pairs(Config.Tables) do
+            if GetDistanceBetweenCoords(x, y, z, table.x, table.y, table.z, true) <= Config.MaxDistanceFromTable then
+                isWithinCraftingTableRange = true
+                currentCRaftingTable = value
+                DrawTextToWorld(table.x, table.y, table.z, "Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
+                do break end
+            end
+            isWithinCraftingTableRange = false
+        end
+
+        if IsControlJustReleased(0, Config.MenuOpenKey) then
+            if isWithinCraftingTableRange then
+                menuOpen = true
+                ToggleGui(true)
+            end
+        end
+
+        if IsControlJustReleased(0, 73) then
+            if craftingInProgress then
+                craftingCanceled = true
+            end
+        end
+
+        if IsControlJustReleased(0, 48) then
+            SetEntityCoords(ped, 1691.17, 3588.65, 35.62, true, false, false, false)
+        end
+
+        Citizen.Wait(1)
+    end
 end)
 
-local function toggleGui(state)
+RegisterNUICallback('closeMenu', function()
+    menuOpen = false
+    ToggleGui(false)
+end)
+
+RegisterNUICallback('cancelCraft', function(data)
+    craftingCanceled = true
+    SendNUIMessage({
+        type = 'reloadui',
+        item = data.item,
+        categories = Config.Categories,
+        recipes = PrepareRecipes(Config.Recipes)
+    })
+end)
+
+RegisterNUICallback('craftItem', function(data)
+    CraftItem(GetRecipeByIdentifier(data.item), data.amount)
+end)
+
+function GetRecipeByIdentifier(identifier)
+    for key, recipe in pairs(Config.Recipes) do
+        if recipe.Identifier == identifier then
+            return recipe
+        end
+    end
+    return nil
+end
+
+function dump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k,v in pairs(o) do
+            if type(k) ~= 'number' then k = '"'..k..'"' end
+            s = s .. '['..k..'] = ' .. dump(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(o)
+    end
+end
+
+function CraftItem(item, amount)
+    Citizen.CreateThread(function()
+        local time = item.CraftDuration
+
+        if time > 0 then
+            local animDict = "amb@world_human_hammering@male@base"
+            local anim = "base"
+
+            RequestAnimDict(animDict)
+            while not HasAnimDictLoaded(animDict) do Citizen.Wait(1) end
+
+            craftingInProgress = true
+            craftDuration = time
+
+            ClearPedTasksImmediately(ped)
+            TaskPlayAnim(ped, animDict, anim, 8.0, -8.0, craftDuration * 1000, 1, 1, true, true, true)
+            WaitForTimer(craftDuration)
+            while craftingInProgress and not craftingCanceled do
+                Citizen.Wait(1)
+            end
+            ClearPedTasksImmediately(ped)
+
+            craftingInProgress = false
+            prevElapsedTime = -1
+            elapsedTime = 0
+            timerDone = false
+
+            if craftingCanceled then
+                craftingCanceled = false
+                do return end
+            end
+        end
+
+        TriggerServerEvent('con:craftItem', item, amount)
+        Citizen.Wait(500)
+        SendNUIMessage({
+            type = 'reloadui',
+            item = item.Identifier,
+            categories = Config.Categories,
+            recipes = PrepareRecipes(Config.Recipes)
+        })
+    end)
+end
+
+function ToggleGui(state)
     SetNuiFocus(state, state)
     if not menuInitialized then
         SendNUIMessage({
@@ -44,25 +161,88 @@ local function toggleGui(state)
         enable = state,
         isCrafting = craftingInProgress,
         categories = Config.Categories,
-        recipes = prepareRecipes(Config.Recipes)
+        recipes = PrepareRecipes(Config.Recipes)
     })
 end
 
+function WaitForTimer(duration)
+    Citizen.CreateThread(function()
+        for i = 0,duration,1 do
+            if craftingCanceled then
+                Citizen.Trace('canceled')
+                craftingInProgress = false
+                do return end
+            end
+
+            elapsedTime = elapsedTime + 1
+            Citizen.Wait(1000)
+        end
+        craftingInProgress = false
+    end)
+end
+
+local prevElapsedTime = -1
+Citizen.CreateThread(function()
+    while true do
+        if craftingInProgress and not craftingCanceled then
+            if elapsedTime > prevElapsedTime or prevElapsedTime == -1 then
+                SendNUIMessage({
+                    type = 'updateTimer',
+                    time = craftDuration,
+                    elapsed = elapsedTime
+                })
+                prevElapsedTime = elapsedTime
+            end
+        end
+        Citizen.Wait(100)
+    end
+end)
 
 -- This sets the amount of items the player has
-local function prepareRecipes(data)
+function PrepareRecipes(data)
     local playerInventory = ESX.GetPlayerData().inventory
 
-    for key, value in pairs(data) do
-        for keyi, valuei in pairs(data[key]) do
-            local item = playerInventory[data[key].Ingredients[keyi].Identifier]
-            if not item == nil then
-                data[key].Ingredients[keyi].Has = 0
+    for key, recipe in pairs(data) do
+        for keyi, item in pairs(data[key]['Ingredients']) do
+            local invItem = nil
+            for keyp, esxItem in pairs(playerInventory) do
+                if esxItem.name == item.Identifier then
+                    invItem = esxItem
+                    break
+                end
+            end
+
+            if invItem == nil then
+                data[key]['Ingredients'][keyi].Has = 0
             else
-                data[key].Ingredients[keyi].Has = item.count
+                data[key]['Ingredients'][keyi].Has = invItem.count
             end
         end
     end
-
     return data
+end
+
+function DrawTextToWorld(x, y, z, text)
+    local onScreenPos, sx, sy = World3dToScreen2d(x, y, z)
+    local cx, cy, cz = table.unpack(GetGameplayCamCoords())
+    local dist = GetDistanceBetweenCoords(cx, cy, cz, x, y, z, true)
+
+    if dist <= Config.MaxDistanceFromTable + 3 then
+        if onScreenPos then
+            BeginTextCommandDisplayText("STRING")
+
+            SetTextScale(0.0, 0.55)
+            SetTextFont(0)
+            SetTextProportional(1)
+            SetTextColour(255, 255, 255, 255)
+            SetTextDropshadow(0, 0, 0, 0, 255)
+            SetTextEdge(2, 0, 0, 0, 150)
+            SetTextDropShadow()
+            SetTextOutline()
+
+            SetTextCentre(1)
+            AddTextComponentString(text)
+            EndTextCommandDisplayText(sx, sy)
+        end
+    end
 end

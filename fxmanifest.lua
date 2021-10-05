@@ -7,23 +7,22 @@
 fx_version 'cerulean'
 games { 'gta5' }
 
-author 'Elias Zech <elias.zech@outlook.com>'
+author 'Concado (Baumi)'
 description 'A crafting system to craft items'
-version '1.0.0'
+version '2.0.0'
 
 -- What to run
 client_scripts {
-    'client.lua'
+    'client.lua',
+    'config.lua'
 }
-server_script 'server_script.js'
+server_script 'server.lua'
 
 files {
     'menu/menu.html',
     'menu/js/jquery.min.js',
     'menu/js/jquery.blockUi.js',
     'menu/js/scripts.js',
-    'menu/js/vue.min.js',
-    'config.lua'
 }
 ui_page 'menu/menu.html'
 

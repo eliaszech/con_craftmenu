@@ -6,7 +6,7 @@
 
 --Recipe Template
 --[[
-    ["test"] = {
+    {
         Name = "Test",
         Identifier = "test",
         Category = "Kleidung", -- This has to be a category which was defined above
@@ -15,13 +15,13 @@
         CraftDuration = 15, -- The Time it takes to craft this item
         CraftAmount = 1, -- The amount of items you get from crafting
         Ingredients = { -- Crafting requirements
-            ["test_ingred"] = {
+            {
                 Name = "Test Ingredient",
                 Identifier = "test_ingred", -- has to be the item name in the database
                 Icon = "far fa-cut",
                 Amount = 5 -- The amount you need rom this item
             },
-            ["test_ingred2"] = {
+            {
                 Name = "Test Ingredient 2",
                 Identifier = "test_ingred2", -- has to be the item name in the database
                 Icon = "far fa-cut",
@@ -32,7 +32,7 @@
 --]]
 
 Config = {}
-Config.MenuTitle = ""
+Config.MenuTitle = "Concado's Crafting Menu"
 Config.MenuOpenKey = 38
 Config.MaxDistanceFromTable = 3
 
@@ -40,34 +40,29 @@ Config.UseImageFolder = true
 Config.ImageFolder = 'https://resourcename/folder'
 
 Config.Tables = {
-    { x = 1691.17, y = 3588.65, z = 35.62 }
+    ['1'] = { x = 1691.17, y = 3588.65, z = 35.62 }
 }
 
 Config.Categories = {
-    ["Kleidung"] = { Name = "Kleidung" }
+    { Name = "Kleidung", Icon = "" },
+    { Name = 'Waffen', Icon = "" }
 }
 
 Config.Recipes = {
-    ["test"] = {
-        Name = "Test",
-        Identifier = "test",
+    {
+        Name = "Pullover",
+        Identifier = "pullover",
         Category = "Kleidung", -- This has to be a category which was defined above
         Description = 'This is a test recipe',
         DefaultImage = '',
         CraftDuration = 15, -- The Time it takes to craft this item
         CraftAmount = 1, -- The amount of items you get from crafting
         Ingredients = { -- Crafting requirements
-            ["test_ingred"] = {
-                Name = "Test Ingredient",
-                Identifier = "test_ingred", -- has to be the item name in the database
+            {
+                Name = "Wolle",
+                Identifier = "wool", -- has to be the item name in the database
                 Icon = "far fa-cut",
                 Amount = 5 -- The amount you need rom this item
-            },
-            ["test_ingred2"] = {
-                Name = "Test Ingredient 2",
-                Identifier = "test_ingred2", -- has to be the item name in the database
-                Icon = "far fa-cut",
-                Amount = 1 -- The amount you need rom this item
             }
         }
     }
