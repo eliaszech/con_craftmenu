@@ -52,7 +52,7 @@ const loadRecipe = (item) => {
         <div class="min-h-0 flex-1 overflow-y-auto">
             <div class="bg-gray-900 pt-3 pb-3 shadow border-b border-gray-700">
                 <div class="px-4 flex items-center">
-                    <img class="h-20 w-20 rounded block mr-3" src="${recipe.Image}" alt="">
+                    <img class="h-20 w-20 rounded block mr-3" src="${recipe.DefaultImage}" alt="">
                     <div class="sm:w-0 sm:flex-1">
                         <h1 class="text-lg font-medium text-gray-300">
                             ${recipe.Name}

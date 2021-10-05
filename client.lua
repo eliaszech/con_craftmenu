@@ -12,6 +12,7 @@ local craftingInProgress = false
 local craftingCanceled = false
 local craftDuration = 0
 local elapsedTime = 0
+local prevElapsedTime = -1
 
 local ped = nil
 
@@ -89,19 +90,6 @@ function GetRecipeByIdentifier(identifier)
     return nil
 end
 
-function dump(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k,v in pairs(o) do
-            if type(k) ~= 'number' then k = '"'..k..'"' end
-            s = s .. '['..k..'] = ' .. dump(v) .. ','
-        end
-        return s .. '} '
-    else
-        return tostring(o)
-    end
-end
-
 function CraftItem(item, amount)
     Citizen.CreateThread(function()
         local time = item.CraftDuration
@@ -119,17 +107,14 @@ function CraftItem(item, amount)
             ClearPedTasksImmediately(ped)
             TaskPlayAnim(ped, animDict, anim, 8.0, -8.0, craftDuration * 1000, 1, 1, true, true, true)
             WaitForTimer(craftDuration)
-            while craftingInProgress and not craftingCanceled do
-                Citizen.Wait(1)
-            end
             ClearPedTasksImmediately(ped)
 
             craftingInProgress = false
             prevElapsedTime = -1
             elapsedTime = 0
-            timerDone = false
 
             if craftingCanceled then
+                Citizen.Trace('crafting canceled')
                 craftingCanceled = false
                 do return end
             end
@@ -166,26 +151,22 @@ function ToggleGui(state)
 end
 
 function WaitForTimer(duration)
-    Citizen.CreateThread(function()
-        for i = 0,duration,1 do
-            if craftingCanceled then
-                Citizen.Trace('canceled')
-                craftingInProgress = false
-                do return end
-            end
-
-            elapsedTime = elapsedTime + 1
-            Citizen.Wait(1000)
+    for i = 0,duration - 1,1 do
+        Citizen.Trace('timed')
+        if craftingCanceled then
+            do break end
         end
-        craftingInProgress = false
-    end)
+
+        elapsedTime = elapsedTime + 1
+        Citizen.Wait(1000)
+    end
 end
 
-local prevElapsedTime = -1
 Citizen.CreateThread(function()
     while true do
         if craftingInProgress and not craftingCanceled then
             if elapsedTime > prevElapsedTime or prevElapsedTime == -1 then
+                Citizen.Trace('update ui')
                 SendNUIMessage({
                     type = 'updateTimer',
                     time = craftDuration,

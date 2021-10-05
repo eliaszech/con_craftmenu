@@ -31,6 +31,8 @@
     }
 --]]
 
+-- Icons can be choosen from here https://fontawesome.com/v5.15/icons?d=gallery&p=2
+
 Config = {}
 Config.MenuTitle = "Concado's Crafting Menu"
 Config.MenuOpenKey = 38
@@ -44,8 +46,8 @@ Config.Tables = {
 }
 
 Config.Categories = {
-    { Name = "Kleidung", Icon = "" },
-    { Name = 'Waffen', Icon = "" }
+    { Name = "Kleidung", Icon = "far fa-tshirt" },
+    { Name = 'Waffen', Icon = "far fa-raygun" }
 }
 
 Config.Recipes = {
@@ -54,7 +56,7 @@ Config.Recipes = {
         Identifier = "pullover",
         Category = "Kleidung", -- This has to be a category which was defined above
         Description = 'This is a test recipe',
-        DefaultImage = '',
+        DefaultImage = 'https://awgikyrvip.cloudimg.io/v7/_media_/media/image/1d/6a/47/_FrontImage_30403tyZaMF8ZT5TVg.png',
         CraftDuration = 15, -- The Time it takes to craft this item
         CraftAmount = 1, -- The amount of items you get from crafting
         Ingredients = { -- Crafting requirements
