@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/0953f4b0db.js" crossorigin="anonymous"></script>
+        <script src="js/jquery.min.js" type="text/javascript"></script>
+        <script src="js/jquery.blockUi.js" type="text/javascript"></script>
+        <script src="js/scripts.js"></script>
+        <style>
+            ::-webkit-scrollbar {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Track */
+            ::-webkit-scrollbar-track {
+                background: black;
+                border-left: 1px solid #4A5568;
+            }
+
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+                background: #1A202C;
+                border: 1px solid #4A5568;
+            }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="menu" class="flex items-center justify-center h-screen hidden">
+            <main class="lg:w-1/2 md:w-3/4 sm: sm:w-4/5 grid grid-cols-3 shadow border-2 border-gray-700">
+                <section class="col-span-3">
+                    <div class="h-full relative flex flex-col w-96 border-b border-gray-700" >
+                        <div class="flex-shrink-0">
+                            <div class="h-16 px-6 flex flex-col justify-center bg-gray-900" style="background-image: url('https://cdnb.artstation.com/p/assets/images/images/024/538/827/original/pixel-jeff-clipa-s.gif?1582740711')">
+                                <div class="flex items-baseline space-x-3">
+                                    <h1 class="text-xl font-bold text-white drop-shadow" style="font-size: 28px; text-shadow: 3px 3px #1A202C" id="menuTitle">{Title}</h1>
+                                    <p class="text-sm font-medium text-gray-500"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-span-1" style="min-height: 700px; max-height: 700px;" id="leftContainer">
+                    <div class="h-full relative flex flex-col w-96 border-r border-gray-700 bg-gray-100">
+                        <div class="flex-shrink-0">
+                            <div class="h-12 px-6 flex flex-col justify-center bg-gray-900">
+                                <div class="flex items-baseline space-x-3">
+                                    <h2 class="text-lg font-medium text-white">Blueprints</h2>
+                                    <p class="text-sm font-medium text-gray-500" id="recCount"></p>
+                                </div>
+                            </div>
+                            <div class="ext-sm font-medium text-gray-400 border-b border-t border-gray-700">
+                                <input type="text" class="px-4 py-2 w-full rounded-none bg-gray-800 outline-none" id="searchRec" placeholder="Rezepte durchsuchen..."/>
+                            </div>
+                        </div>
+                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto bg-gray-900">
+                            <ul role="list" class="divide-y divide-gray-700" id="recipesContainer">
+                            </ul>
+                        </nav>
+                    </div>
+                </section>
+                <section class="col-span-2  flex-1 h-full flex flex-col bg-gray-900 overflow-hidden" style="max-height: 700px;" id="recipeContainer">
+                    <h1 class="text-gray-400 text-xl font-bold text-center w-full py-20">Wähle ein Rezept aus...</h1>
+                </section>
+                <footer class="col-span-3 border-t border-gray-700 py-1 px-2 bg-gray-900">
+                    <span class="text-gray-500 text-sm">In Entwicklung, bei Fehlern bitte bei Baumi#9999 melden <i class="far fa-copyright"></i> Oktagon-X, Baumi</span>
+                </footer>
+            </main>
+        </div>
+    </body>
+</html>
