@@ -38,7 +38,8 @@ Config.MenuTitle = "Concado's Crafting Menu"
 Config.MenuOpenKey = 38
 Config.MaxDistanceFromTable = 3
 
-Config.UseImageFolder = true
+-- if true it takes a picture out of the specified folder, the name has to be RecipeIdentifier.png
+Config.UseImageFolder = false
 Config.ImageFolder = 'https://resourcename/folder'
 
 Config.Tables = {

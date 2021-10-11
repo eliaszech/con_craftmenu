@@ -180,6 +180,10 @@ function PrepareRecipes(data)
     local playerInventory = ESX.GetPlayerData().inventory
 
     for key, recipe in pairs(data) do
+        if Config.UseImageFolder then
+            data[key].DefaultImage = Config.ImageFolder .. '/' .. recipe.Identifier .. '.png'
+        end
+
         for keyi, item in pairs(data[key]['Ingredients']) do
             local invItem = nil
             for keyp, esxItem in pairs(playerInventory) do
