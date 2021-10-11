@@ -54,10 +54,6 @@ Citizen.CreateThread(function()
             end
         end
 
-        if IsControlJustReleased(0, 48) then
-            SetEntityCoords(ped, 1691.17, 3588.65, 35.62, true, false, false, false)
-        end
-
         Citizen.Wait(1)
     end
 end)

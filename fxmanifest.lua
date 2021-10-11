@@ -9,7 +9,7 @@ games { 'gta5' }
 
 author 'Concado (Baumi)'
 description 'A crafting system to craft items'
-version '2.0.0'
+version '2.0.1'
 
 -- What to run
 client_scripts {
