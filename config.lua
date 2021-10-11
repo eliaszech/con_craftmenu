@@ -54,7 +54,7 @@ Config.Categories = {
 Config.Recipes = {
     {
         Name = "Pullover",
-        Identifier = "pullover",
+        Identifier = "pullover", -- has to be the item name in the database
         Category = "Kleidung", -- This has to be a category which was defined above
         Description = 'This is a test recipe',
         DefaultImage = 'https://awgikyrvip.cloudimg.io/v7/_media_/media/image/1d/6a/47/_FrontImage_30403tyZaMF8ZT5TVg.png',
