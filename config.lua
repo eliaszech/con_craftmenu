@@ -47,6 +47,8 @@ Config.BlipSprite = 402 -- https://wiki.gtanet.work/index.php?title=Blips
 Config.BlipColor = 42 -- https://wiki.gtanet.work/index.php?title=Blips
 Config.BlipScale = 1.0
 
+Config.PromptText = 'Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen'
+
 Config.Tables = {
     ['1'] = { x = 1691.17, y = 3588.65, z = 35.62 }
 }

@@ -47,7 +47,7 @@ Citizen.CreateThread(function()
             if GetDistanceBetweenCoords(x, y, z, table.x, table.y, table.z, true) <= Config.MaxDistanceFromTable then
                 isWithinCraftingTableRange = true
                 currentCRaftingTable = value
-                DisplayPrompt("Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
+                DisplayPrompt(Config.PromptText)
                 do break end
             end
             isWithinCraftingTableRange = false
