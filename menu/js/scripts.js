@@ -2,13 +2,13 @@ let categories = null;
 let recipes = null;
 
 function craftItem(item, amount) {
-    $.post('https://oktagoncraftmenu/craftItem', JSON.stringify({
+    $.post('https://con_craftmenu/craftItem', JSON.stringify({
         "item": item, "amount": amount
     }));
 }
 
 function cancelCraft(item) {
-    $.post('https://oktagoncraftmenu/cancelCraft', JSON.stringify({
+    $.post('https://con_craftmenu/cancelCraft', JSON.stringify({
         "item": item
     }));
 }
@@ -238,7 +238,7 @@ $(function() {
 
     window.addEventListener('keyup', (e) => {
         if(e.key === 'Escape') {
-            $.post('https://oktagoncraftmenu/closeMenu', JSON.stringify({}));
+            $.post('https://con_craftmenu/closeMenu', JSON.stringify({}));
         }
     })
 })
