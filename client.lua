@@ -22,6 +22,18 @@ Citizen.CreateThread(function()
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
         Citizen.Wait(1)
     end
+
+    for key, table in pairs(Config.Tables) do
+        local blip = AddBlipForCoord(table.x, table.y, table.z)
+        SetBlipSprite(blip, Config.BlipSprite)
+        SetBlipDisplay(blip, 2)
+        SetBlipScale(blip, Config.BlipScale)
+        SetBlipColour(blip, Config.BlipColor)
+        SetBlipAsShortRange(blip, false)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(Config.BlipName)
+        EndTextCommandSetBlipName(blip)
+    end
 end)
 
 local isWithinCraftingTableRange = false
@@ -35,7 +47,7 @@ Citizen.CreateThread(function()
             if GetDistanceBetweenCoords(x, y, z, table.x, table.y, table.z, true) <= Config.MaxDistanceFromTable then
                 isWithinCraftingTableRange = true
                 currentCRaftingTable = value
-                DrawTextToWorld(table.x, table.y, table.z, "Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
+                DisplayPrompt("Drücke ~g~[E] ~s~um das Herstellungsmenü zu öffnen")
                 do break end
             end
             isWithinCraftingTableRange = false
@@ -203,27 +215,13 @@ function PrepareRecipes(data)
     return data
 end
 
-function DrawTextToWorld(x, y, z, text)
-    local onScreenPos, sx, sy = World3dToScreen2d(x, y, z)
-    local cx, cy, cz = table.unpack(GetGameplayCamCoords())
-    local dist = GetDistanceBetweenCoords(cx, cy, cz, x, y, z, true)
+function DisplayPrompt(x, y, z, text)
+    local px, py, pz = table.unpack(GetEntityCoords(ped))
+    local dist = GetDistanceBetweenCoords(px, py, pz, x, y, z, true)
 
     if dist <= Config.MaxDistanceFromTable + 3 then
-        if onScreenPos then
-            BeginTextCommandDisplayText("STRING")
-
-            SetTextScale(0.0, 0.55)
-            SetTextFont(0)
-            SetTextProportional(1)
-            SetTextColour(255, 255, 255, 255)
-            SetTextDropshadow(0, 0, 0, 0, 255)
-            SetTextEdge(2, 0, 0, 0, 150)
-            SetTextDropShadow()
-            SetTextOutline()
-
-            SetTextCentre(1)
-            AddTextComponentString(text)
-            EndTextCommandDisplayText(sx, sy)
-        end
+        BeginTextCommandDisplayHelp("STRING")
+        AddTextComponentString(text)
+        EndTextCommandDisplayHelp(0, 0, 1, -1)
     end
 end

@@ -42,6 +42,11 @@ Config.MaxDistanceFromTable = 3
 Config.UseImageFolder = false
 Config.ImageFolder = 'https://resourcename/folder'
 
+Config.BlipName = 'Herstellungstisch'
+Config.BlipSprite = 402 -- https://wiki.gtanet.work/index.php?title=Blips
+Config.BlipColor = 42 -- https://wiki.gtanet.work/index.php?title=Blips
+Config.BlipScale = 1.0
+
 Config.Tables = {
     ['1'] = { x = 1691.17, y = 3588.65, z = 35.62 }
 }
